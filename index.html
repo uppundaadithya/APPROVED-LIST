@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Approved Programs</title>
+  <style>
+
+    th, td { border: 1px solid #aaa; padding: 10px; }
+
+  </style>
+</head>
+<body>
+
+  <style>
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: linear-gradient(to bottom, rgb(244, 248, 242), rgb(255, 244, 223));
+    background-size: 150% 100%;
+    background-attachment: fixed;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  img {
+    border-radius: 50px;
+    height: 80px;
+    width: 80px;
+  }
+
+  .inputarea1 {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .inputarea1 h1 {
+    font-size: 1.8rem;
+    margin: 5px 0;
+  }
+
+  #DR {
+    border-bottom: solid rgb(125, 18, 18) 2px;
+    width: 60%;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.6rem;
+    color: #630101;
+  }
+
+  .btn {
+    background-color: #630101;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    margin: 10px;
+    transition: 0.3s ease-in-out;
+  }
+
+  .btn:hover {
+    opacity: 0.9;
+  }
+
+  .btn-danger {
+    background-color: #a50000;
+  }
+
+  .btn-back {
+    display: block;
+    margin: 0 auto 20px auto;
+    text-decoration: none;
+  }
+
+  table {
+    width: 90%;
+    min-width: 800px;
+    border-collapse: collapse;
+    margin: 0 auto 40px auto;
+  }
+
+  th, td {
+    border: 1px solid #000000;
+    padding: 12px 15px;
+    text-align: center;
+  }
+
+   a{
+    text-decoration: none;
+   }
+
+  @media screen and (max-width: 768px) {
+    img {
+      height: 60px;
+      width: 60px;
+    }
+
+    .inputarea1 h1 {
+      font-size: 1.3rem;
+    }
+
+    table {
+      min-width: 100%;
+      overflow-x: auto;
+      display: block;
+    }
+
+    th, td {
+      font-size: 14px;
+      padding: 8px;
+    }
+
+    .btn {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+</style>
+
+
+  </style>
+ <div class="inputarea1">
+    <img src="download.jpg" alt="">
+    <h1>DR.B.B. HEGDE FIRST GRADE COLLEGE</h1>
+    <h1 id="DR"></h1>
+    <h1>Kundapura</h1>
+  </div>
+
+  <h1>Approved Programs</h1>
+  <a href="index.html"><button class="btn btn-back" id="backbtn">🔙 Back To Register Page</button></a>
+
+  <table >
+    <thead>
+      <tr>
+        <th>Program Name</th>
+        <th>Date</th>
+        <th>Coordinator</th>
+        <th>Phone</th>
+        <th>Resource Person</th>
+        <th>Venue</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="approved-table"></tbody>
+  </table>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBK-FCsvl2TgfuqLNg9RV80Fodnc0wXeps",
+      authDomain: "program-38391.firebaseapp.com",
+      projectId: "program-38391",
+      storageBucket: "program-38391.appspot.com",
+      messagingSenderId: "631653067819",
+      appId: "1:631653067819:web:9660a94a555d8ac17c4e6e",
+      measurementId: "G-H7WJ5NL8SN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const approvedTable = document.getElementById("approved-table");
+
+    async function loadApproved() {
+      approvedTable.innerHTML = ""; // Clear table before loading
+      const snapshot = await getDocs(collection(db, "programs"));
+      snapshot.forEach(docSnap => {
+        const d = docSnap.data();
+        const id = docSnap.id;
+
+        if (d.approved) {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${d.programName}</td>
+            <td>${d.date}</td>
+            <td>${d.coordinator}</td>
+            <td>${d.phone}</td>
+            <td>${d.resourcePerson}</td>
+            <td>${d.venue}</td>
+            <td><button class="btn btn-danger">Approved</button></td>
+          `;
+          approvedTable.appendChild(row);
+        }
+      });
+    }
+
+    // Delete a selected record
+    async function deleteRecord(id) {
+      const confirmDelete = confirm("Are you sure you want to delete this approved program?");
+      if (!confirmDelete) return;
+      await deleteDoc(doc(db, "programs", id));
+      alert("Record deleted successfully.");
+      loadApproved(); // Refresh table after deletion
+    }
+
+    // Make the function available globally
+    window.deleteRecord = deleteRecord;
+
+    loadApproved();
+  </script>
+</body>
+</html>
