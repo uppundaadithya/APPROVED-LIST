@@ -146,6 +146,12 @@
 
   <h1>Approved Programs</h1>
   <a href="https://uppundaadithya.github.io/PROGRAM-REGISTER-MAIN/"><button class="btn btn-back" id="backbtn">🔙 Back To Register Page</button></a>
+    <div style="text-align:center; margin:20px;">
+    <input type="text" id="searchBar" placeholder="Search..." onkeyup="searchContent()">
+    <button class="btn" onclick="searchContent()">🔍</button>
+    <p id="notFound" style="text-align:center; color:red; display:none;">No matching records found.</p>
+  </div>
+
 
   <table >
     <thead>
@@ -200,6 +206,24 @@
           approvedTable.appendChild(row);
         }
       });
+    }
+
+        window.searchContent = function () {
+      let input = document.getElementById('searchBar').value.toLowerCase();
+      let rows = document.querySelectorAll("#approved-table tr");
+      let found = false;
+
+      rows.forEach(row => {
+        let rowText = row.innerText.toLowerCase();
+        if (rowText.includes(input)) {
+          row.style.display = "";
+          found = true;
+        } else {
+          row.style.display = "none";
+        }
+      });
+
+      document.getElementById('notFound').style.display = found ? 'none' : 'block';
     }
 
     // Delete a selected record
